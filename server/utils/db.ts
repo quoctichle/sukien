@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 
 // Ensure environment variables from .env.local are loaded when running Nuxt dev
-if (!process.env.MONGODB_URI) {
+if (!process.env.MONGODB_URI && !process.env.DATABASE_URL) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const dotenv = require('dotenv')
@@ -20,24 +20,33 @@ try {
   // useRuntimeConfig is available in Nuxt server runtime
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const maybeConfig: any = typeof useRuntimeConfig !== 'undefined' ? useRuntimeConfig() : null
-  if (maybeConfig && maybeConfig.mongodbUri) {
-    mongodbUri = mongodbUri || maybeConfig.mongodbUri
+  if (maybeConfig?.mongodbUri) {
+    mongodbUri = maybeConfig.mongodbUri || mongodbUri
   }
 } catch (e) {
   // ignore if helper not available
 }
 
+// Fallback to localhost for development
 mongodbUri = mongodbUri || 'mongodb://localhost:27017/nuxt-app'
 
-if (!process.env.MONGODB_URI && !process.env.DATABASE_URL) {
-  console.warn('Warning: MONGODB_URI not set in environment; using', mongodbUri)
-} else {
-  try {
-    const safe = mongodbUri.startsWith('mongodb+srv') ? 'mongodb+srv://<cluster>' : mongodbUri
-    console.log('Using MongoDB URI:', safe)
-  } catch (e) {
-    // ignore
+// Log connection info (safe version without password)
+if (process.env.NODE_ENV !== 'production') {
+  if (!process.env.MONGODB_URI && !process.env.DATABASE_URL) {
+    console.warn('⚠️  Warning: MONGODB_URI not set in environment; using localhost')
   }
+}
+
+// Safe log for checking connection
+try {
+  if (mongodbUri) {
+    const safe = mongodbUri.includes('mongodb+srv') 
+      ? mongodbUri.replace(/:[^:@]*@/, ':***@')
+      : mongodbUri
+    console.log('📦 MongoDB URI configured:', safe.substring(0, 50) + '...')
+  }
+} catch (e) {
+  // ignore
 }
 
 let cached = global as any
@@ -55,19 +64,25 @@ export async function connectDB() {
   }
 
   if (!cached.mongoose.promise) {
+    if (!mongodbUri) {
+      throw new Error('MONGODB_URI is not configured. Please set MONGODB_URI environment variable.')
+    }
+
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 10000,
     }
 
     cached.mongoose.promise = mongoose
       .connect(mongodbUri, opts)
       .then(mongoose => {
-        console.log('MongoDB connected successfully')
+        console.log('✅ MongoDB connected successfully')
         return mongoose
       })
       .catch(error => {
-        console.error('MongoDB connection error:', error)
-        throw error
+        console.error('❌ MongoDB connection error:', error.message)
+        throw new Error(`MongoDB connection failed: ${error.message}`)
       })
   }
 
