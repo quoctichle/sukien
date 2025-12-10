@@ -5,8 +5,8 @@
     <div class="overlay"></div>
 
     <div class="lang-wrap">
-      <button :class="{ active: locale === 'vi' }" @click="setLocale('vi')">Tiếng Việt</button>
-      <button :class="{ active: locale === 'en' }" @click="setLocale('en')">English</button>
+      <button :class="{ active: locale === 'vi' }" @click="switchLanguage('vi')">Tiếng Việt</button>
+      <button :class="{ active: locale === 'en' }" @click="switchLanguage('en')">English</button>
     </div>
 
     <h1 class="landing-title">{{ t('landingTitle') }}</h1>
@@ -43,10 +43,15 @@ const form = reactive({ name: '', customerId: '', code: '' })
 
 const errorMsg = ref('')
 
-// Redirect to /vi as default language
+// Set language to Vietnamese
 onMounted(() => {
-  router.push('/vi')
+  setLocale('vi')
 })
+
+const switchLanguage = (lang: 'vi' | 'en') => {
+  setLocale(lang)
+  router.push(`/${lang}`)
+}
 
 const submitForm = async () => {
   errorMsg.value = ''
@@ -96,26 +101,7 @@ const submitForm = async () => {
 .lang-wrap{position:absolute;top:26px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:12px}
 .lang-wrap button{padding:10px 22px;border-radius:28px;border:none;background:#fff;color:#333;cursor:pointer;box-shadow:0 10px 18px rgba(0,0,0,0.12);font-weight:700}
 .lang-wrap button.active{background:#4caf50;color:#fff}
-.landing-title{
-  z-index: 3;
-  font-weight: 900;
-  text-align: center;
-  font-family: 'FS MAGISTRAL', Arial, Helvetica, sans-serif;
-  /* keep on one line but avoid clipping; allow font to scale down */
-  white-space: nowrap;
-  font-size: clamp(32px, 5.5vw, 56px);
-  letter-spacing: 0.8px;
-  max-width: 1000px;
-  width: 100%;
-  margin: 0 auto 24px auto;
-  line-height: 1.4; /* allow descenders to show */
-  background: linear-gradient(135deg, #f9ecae, #e8b35c, #f8eba8, #e8b35c, #f9ecae);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-
-}
+.landing-title{z-index:3;color:#1f6b2e;font-weight:700;margin:8px 0 28px;text-align:center;font-size:40px;letter-spacing:0.6px;max-width:760px;margin-left:auto;margin-right:auto}
 .card-wrap{z-index:3;width:100%;display:flex;justify-content:center;max-width:100%;padding:0 4px}
 .card{background:linear-gradient(180deg,#4aa25a,#3e8a42);padding:32px 50px;border-radius:var(--card-radius);-webkit-border-radius:var(--card-radius);-moz-border-radius:var(--card-radius);color:#fff;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);overflow:hidden;background-clip:padding-box;width:100%;max-width:760px}
 .card{border-radius:18px !important}

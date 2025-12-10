@@ -1,4 +1,6 @@
 <template>
+  <Fireworks />
+  <Sakura />
   <div class="landing-root">
     <div class="overlay"></div>
 

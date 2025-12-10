@@ -1,9 +1,6 @@
 <template>
+  <Fireworks />
   <div class="enter-page">
-    <div class="lang-wrap">
-      <button :class="{ active: locale === 'vi' }" @click="setLocale('vi')">Tiếng Việt</button>
-      <button :class="{ active: locale === 'en' }" @click="setLocale('en')">English</button>
-    </div>
 
     <div class="card">
       <h2>{{ t('goldPricePrediction') }}</h2>
@@ -58,13 +55,13 @@ const getPredictionCount = (codeStr: string): number => {
   const prefix = codeStr.charAt(0).toUpperCase()
   switch (prefix) {
     case 'V':
-      return 4
+      return 5
     case 'B':
-      return 3
+      return 4
     case 'D':
-      return 2
+      return 3
     default:
-      return 1
+      return 2
   }
 }
 
@@ -128,36 +125,16 @@ const goHome = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #f7f8fb, #fff);
+  /* full-page background image to match other pages */
+  background-image: url('/background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   padding: 40px 20px;
   position: relative;
 }
 
-.lang-wrap {
-  position: absolute;
-  top: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-  display: flex;
-  gap: 12px;
-}
-
-.lang-wrap button {
-  padding: 10px 22px;
-  border-radius: 28px;
-  border: none;
-  background: #fff;
-  color: #333;
-  cursor: pointer;
-  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
-  font-weight: 700;
-}
-
-.lang-wrap button.active {
-  background: #4caf50;
-  color: #fff;
-}
+/* language buttons removed for this page; global switcher is controlled in app.vue */
 
 .card {
   background: white;
@@ -166,6 +143,8 @@ const goHome = () => {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   max-width: 640px;
   width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 h2 {

@@ -1,4 +1,6 @@
 <template>
+  <Fireworks />
+  <Sakura />
   <div class="user-page">
     <div class="overlay"></div>
     <div class="lang-toggle">
@@ -8,7 +10,7 @@
 
     <main class="form-wrap">
       <form class="entry-card" @submit.prevent="submitForm">
-        <h2 class="title">Đoán số dễ dàng - Rinh vàng đầu năm</h2>
+        <h2 class="title">{{ t('landingTitle') }}</h2>
 
         <label> <span> Tên Facebook:</span>
           <input v-model="form.name" placeholder="Nhập tên Facebook của bạn" required />
@@ -76,7 +78,18 @@ const submitForm = async () => {
 .lang-toggle button.active{background:#4caf50;color:#fff}
 .form-wrap{z-index:2;width:100%;max-width:640px;padding:20px;display:flex;justify-content:center}
 .entry-card{width:100%;background:var(--card-bg);padding:26px;border-radius:16px;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,0.4);display:flex;flex-direction:column;gap:12px}
-.title{text-align:center;margin:0 0 6px;font-size:20px;font-weight:700}
+.title{
+  text-align:center;
+  margin:0 0 6px;
+  font-size:28px;
+  font-weight:700;
+  background: linear-gradient(90deg, #f9ecae, #e8b35c, #f8eba8, #e8b35c, #f9ecae);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+}
 .entry-card label{display:flex;flex-direction:column;gap:6px;color:#fff}
 .entry-card span{font-weight:600;background:transparent;padding-bottom:4px}
 .entry-card input{padding:12px;border-radius:8px;border:0;background:rgba(255,255,255,0.95);color:#333}

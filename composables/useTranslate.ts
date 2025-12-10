@@ -18,14 +18,32 @@ export const useTranslate = () => {
     }
   }
 
-  // Load locale from localStorage on mount
+  // Detect language from route prefix or localStorage
   if (process.client) {
     onMounted(() => {
       const saved = localStorage.getItem('locale')
       if (saved === 'vi' || saved === 'en') {
         locale.value = saved
+      } else {
+        // Check route prefix
+        const path = window.location.pathname
+        if (path.startsWith('/en')) {
+          locale.value = 'en'
+        } else if (path.startsWith('/vi')) {
+          locale.value = 'vi'
+        }
       }
     })
+  } else {
+    // SSR: try to detect from route
+    try {
+      const route = useRoute()
+      if (route.path.startsWith('/en')) {
+        locale.value = 'en'
+      } else if (route.path.startsWith('/vi')) {
+        locale.value = 'vi'
+      }
+    } catch {}
   }
 
   return { t, locale, setLocale }

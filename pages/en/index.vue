@@ -5,8 +5,8 @@
     <div class="overlay"></div>
 
     <div class="lang-wrap">
-      <button :class="{ active: locale === 'vi' }" @click="setLocale('vi')">Tiếng Việt</button>
-      <button :class="{ active: locale === 'en' }" @click="setLocale('en')">English</button>
+      <button :class="{ active: locale === 'vi' }" @click="switchLanguage('vi')">Tiếng Việt</button>
+      <button :class="{ active: locale === 'en' }" @click="switchLanguage('en')">English</button>
     </div>
 
     <h1 class="landing-title">{{ t('landingTitle') }}</h1>
@@ -43,17 +43,22 @@ const form = reactive({ name: '', customerId: '', code: '' })
 
 const errorMsg = ref('')
 
-// Redirect to /vi as default language
+// Set language to English
 onMounted(() => {
-  router.push('/vi')
+  setLocale('en')
 })
+
+const switchLanguage = (lang: 'vi' | 'en') => {
+  setLocale(lang)
+  router.push(`/${lang}`)
+}
 
 const submitForm = async () => {
   errorMsg.value = ''
 
   // Client-side required fields
   if (!form.name || !form.customerId || !form.code) {
-    errorMsg.value = 'Vui lòng điền đầy đủ Tên Facebook, ID khách hàng và Mã tham dự'
+    errorMsg.value = 'Please fill in all required fields'
     return
   }
 
@@ -82,7 +87,7 @@ const submitForm = async () => {
     }
   } catch (e: any) {
     console.error('Validation failed', e)
-    errorMsg.value = e?.statusMessage || e?.data?.message || 'Sai mã tham dự'
+    errorMsg.value = e?.statusMessage || e?.data?.message || 'Invalid promo code'
   }
 }
 </script>

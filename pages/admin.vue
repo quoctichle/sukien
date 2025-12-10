@@ -279,31 +279,29 @@ const generateCodes = async (category: string) => {
   }
 }
 
-const exportCodes = () => {
+const exportCodes = async () => {
   try {
     if (!codes.value || codes.value.length === 0) {
       alert('Không có mã để xuất')
       return
     }
 
-    // Prepare CSV headers
-    const headers = ['Mã','Loại','Đã sử dụng','Ngày tạo']
-    const rows = codes.value.map((c: any) => [
-      c.code,
-      c.type === 'X' ? 'Khác' : c.type,
-      c.used ? 'Có' : 'Chưa',
-      new Date(c.createdAt).toLocaleString()
-    ])
+    const response = await fetch('/api/admin/export-codes', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
 
-    const all = [headers, ...rows]
-    const csvContent = all.map(r => r.map(field => `"${String(field).replace(/"/g,'""')}"`).join(',')).join('\r\n')
+    if (!response.ok) {
+      throw new Error('Xuất file thất bại')
+    }
 
-    // Add BOM for Excel compatibility
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const blob = await response.blob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     const now = new Date()
-    const fname = `codes-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.csv`
+    const fname = `codes-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.xlsx`
     a.href = url
     a.setAttribute('download', fname)
     document.body.appendChild(a)
@@ -335,31 +333,29 @@ const loadCustomers = async () => {
   }
 }
 
-const exportCustomers = () => {
+const exportCustomers = async () => {
   try {
     if (!customers.value || customers.value.length === 0) {
       alert('Không có khách hàng để xuất')
       return
     }
 
-    const headers = ['Tên Facebook', 'ID khách hàng', 'Mã tham dự', 'Số dự đoán', 'Dự đoán', 'Ngày tham gia']
-    const rows = customers.value.map((c: any) => [
-      c.name,
-      c.customerId,
-      c.code,
-      c.predictionsCount,
-      c.predictions.join('; '),
-      new Date(c.createdAt).toLocaleString('vi-VN')
-    ])
+    const response = await fetch('/api/admin/export-customers', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
 
-    const all = [headers, ...rows]
-    const csvContent = all.map(r => r.map(field => `"${String(field).replace(/"/g,'""')}"`).join(',')).join('\r\n')
+    if (!response.ok) {
+      throw new Error('Xuất file thất bại')
+    }
 
-    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const blob = await response.blob()
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     const now = new Date()
-    const fname = `customers-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.csv`
+    const fname = `customers-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.xlsx`
     a.href = url
     a.setAttribute('download', fname)
     document.body.appendChild(a)
