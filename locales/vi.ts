@@ -60,9 +60,11 @@ export default {
   ,yourPredictions: 'Dự đoán của bạn'
   ,waitingContact: 'Chúng tôi sẽ liên hệ với bạn sớm nhất'
   ,predictionError: 'Có lỗi xảy ra'
+  ,goldPricePrediction: 'Dự đoán 3 số cuối xổ số Cuối năm(Giải đặc biệt)'
+
   ,shareGuideTitle: 'ĐỀ HOÀN TẤT NHẬN THƯỞNG'
   ,shareGuideSubtitle: 'hãy thực hiện 2 bước đơn giản sau:'
-  ,shareStep1: 'Đoán đúng, Trúng quà tại fanpage SUNSHINE HOME'
+  ,shareStep1: 'Bình luận lời chúc năm mới tới SUNSHINE tại bài viết sau'
   ,shareStep1Action: 'Ấn vào đây'
   ,shareStep2Action: 'Chia sẻ bài viết ở chế độ Công khai'
   ,chooseAudience: 'Chọn đối tượng'

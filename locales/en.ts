@@ -60,9 +60,11 @@ export default {
   ,yourPredictions: 'Your predictions'
   ,waitingContact: 'We will contact you soon'
   ,predictionError: 'An error occurred'
+  ,goldPricePrediction: 'Enter the last 3 digits (special prize prediction)'
+
   ,shareGuideTitle: 'TO COMPLETE AND RECEIVE REWARD'
   ,shareGuideSubtitle: 'Please follow 2 simple steps:'
-  ,shareStep1: 'Guess correctly, win prizes at SUNSHINE HOME fanpage'
+  ,shareStep1: 'Under this post, comment one New Year wish for SUNSHINE'
   ,shareStep1Action: 'Click here'
   ,shareStep2Action: 'Share the post publicly'
   ,chooseAudience: 'Choose audience'

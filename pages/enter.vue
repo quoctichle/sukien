@@ -15,16 +15,19 @@
         <div class="prediction-count">{{ t('predictionCount') }}: <strong>{{ maxPredictions }}</strong></div>
         
         <form @submit.prevent="submitPredictions">
-          <div v-for="(prediction, index) in predictions" :key="index" class="prediction-row">
-            <label>{{ t('predict') }} {{ index + 1 }}:</label>
-            <input 
-              v-model.number="predictions[index]" 
-              type="number" 
-              :placeholder="t('goldPricePrediction')"
-              step="0.01"
-              required
-            />
-          </div>
+                  <div v-for="(prediction, index) in predictions" :key="index" class="prediction-row">
+                    <label>{{ t('predict') }} {{ index + 1 }}:</label>
+                    <input 
+                      v-model="predictions[index]" 
+                      @input="onPredictionInput($event, index)"
+                      type="text" 
+                      inputmode="numeric"
+                      maxlength="3"
+                      pattern="\d{3}"
+                      :placeholder="t('goldPricePrediction')"
+                      required
+                    />
+                  </div>
 
           <div class="button-group">
             <button type="submit" class="submit-btn">{{ t('confirmPrediction') }}</button>
@@ -47,8 +50,10 @@ const customerId = route.query.customerId || ''
 const code = route.query.code || ''
 const error = ref('')
 
+import { ref, onMounted } from 'vue'
+
 const maxPredictions = ref(1)
-const predictions = ref<(number | null)[]>([])
+const predictions = ref<string[]>([])
 
 // Determine number of predictions based on code prefix
 const getPredictionCount = (codeStr: string): number => {
@@ -71,7 +76,7 @@ onMounted(async () => {
     const result = await $fetch('/api/code/validate', { method: 'POST', body: { code } })
     const count = getPredictionCount(code as string)
     maxPredictions.value = count
-    predictions.value = new Array(count).fill(null)
+    predictions.value = new Array(count).fill('')
   } catch (e: any) {
     const errorMsg = e?.statusMessage || e?.data?.message || t('predictionError')
     error.value = errorMsg
@@ -79,11 +84,12 @@ onMounted(async () => {
 })
 
 const submitPredictions = async () => {
-  // Validate all predictions are filled
-  if (predictions.value.some(p => p === null || p === '')) {
-    error.value = locale.value === 'vi' 
-      ? 'Vui lòng điền đầy đủ tất cả các dự đoán'
-      : 'Please fill in all predictions'
+  // Validate all predictions are exactly 3 digits
+  const invalid = predictions.value.some(p => !/^\d{3}$/.test(p))
+  if (invalid) {
+    error.value = locale.value === 'vi'
+      ? 'Mỗi dự đoán phải gồm đúng 3 chữ số'
+      : 'Each prediction must be exactly 3 digits'
     return
   }
 
@@ -111,6 +117,13 @@ const submitPredictions = async () => {
   } catch (e: any) {
     error.value = e?.statusMessage || e?.data?.message || t('predictionError')
   }
+}
+
+// Ensure only digits and max length 3 are stored
+const onPredictionInput = (e: Event, idx: number) => {
+  const target = e.target as HTMLInputElement
+  let v = target.value.replace(/\D/g, '').slice(0, 3)
+  predictions.value[idx] = v
 }
 
 const goHome = () => {
